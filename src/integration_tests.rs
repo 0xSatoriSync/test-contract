@@ -14,9 +14,11 @@ mod tests {
         Box::new(contract)
     }
 
-    const USER: &str = "USER";
+    const USER1: &str = "USER1";
+    const USER2: &str = "USER2";
+    const USER3: &str = "USER3";
     const ADMIN: &str = "ADMIN";
-    const NATIVE_DENOM: &str = "denom";
+    const NATIVE_DENOM: &str = "usei";
 
     fn mock_app() -> App {
         AppBuilder::new().build(|router, _, storage| {
@@ -24,10 +26,10 @@ mod tests {
                 .bank
                 .init_balance(
                     storage,
-                    &Addr::unchecked(USER),
+                    &Addr::unchecked(USER1),
                     vec![Coin {
                         denom: NATIVE_DENOM.to_string(),
-                        amount: Uint128::new(1),
+                        amount: Uint128::new(100000),
                     }],
                 )
                 .unwrap();
@@ -38,7 +40,7 @@ mod tests {
         let mut app = mock_app();
         let cw_template_id = app.store_code(contract_template());
 
-        let msg = InstantiateMsg { count: 1i32 };
+        let msg = InstantiateMsg { fixed_fee: Uint128::from(1000u128) };
         let cw_template_contract_addr = app
             .instantiate_contract(
                 cw_template_id,
@@ -55,7 +57,7 @@ mod tests {
         (app, cw_template_contract)
     }
 
-    mod count {
+    mod execute {
         use super::*;
         use crate::msg::ExecuteMsg;
 
@@ -63,9 +65,9 @@ mod tests {
         fn count() {
             let (mut app, cw_template_contract) = proper_instantiate();
 
-            let msg = ExecuteMsg::Increment {};
+            let msg = ExecuteMsg::SendDuo {receiver1: Addr::unchecked(USER2), receiver2: Addr::unchecked(USER3)};
             let cosmos_msg = cw_template_contract.call(msg).unwrap();
-            app.execute(Addr::unchecked(USER), cosmos_msg).unwrap();
+            app.execute(Addr::unchecked(USER1), cosmos_msg).unwrap();
         }
     }
 }

@@ -5,7 +5,7 @@ use cosmwasm_std::{
     to_binary, Addr, CosmosMsg, CustomQuery, Querier, QuerierWrapper, StdResult, WasmMsg, WasmQuery,
 };
 
-use crate::msg::{ExecuteMsg, GetCountResponse, QueryMsg};
+use crate::msg::{ExecuteMsg, GetBalanceResponse, GetOwnerResponse, QueryMsg};
 
 /// CwTemplateContract is a wrapper around Addr that provides a lot of helpers
 /// for working with this.
@@ -27,20 +27,37 @@ impl CwTemplateContract {
         .into())
     }
 
-    /// Get Count
-    pub fn count<Q, T, CQ>(&self, querier: &Q) -> StdResult<GetCountResponse>
+    /// Get Owner
+    pub fn get_owner<Q, T, CQ>(&self, querier: &Q) -> StdResult<GetOwnerResponse>
     where
         Q: Querier,
         T: Into<String>,
         CQ: CustomQuery,
     {
-        let msg = QueryMsg::GetCount {};
+        let msg = QueryMsg::GetOwner {};
         let query = WasmQuery::Smart {
             contract_addr: self.addr().into(),
             msg: to_binary(&msg)?,
         }
         .into();
-        let res: GetCountResponse = QuerierWrapper::<CQ>::new(querier).query(&query)?;
+        let res: GetOwnerResponse = QuerierWrapper::<CQ>::new(querier).query(&query)?;
+        Ok(res)
+    }
+
+    /// Get Balance
+    pub fn get_balance<Q, T, CQ>(&self, querier: &Q, address: String) -> StdResult<GetBalanceResponse>
+    where
+        Q: Querier,
+        T: Into<String>,
+        CQ: CustomQuery,
+    {
+        let msg = QueryMsg::GetBalance {address};
+        let query = WasmQuery::Smart {
+            contract_addr: self.addr().into(),
+            msg: to_binary(&msg)?,
+        }
+        .into();
+        let res: GetBalanceResponse = QuerierWrapper::<CQ>::new(querier).query(&query)?;
         Ok(res)
     }
 }
