@@ -40,7 +40,7 @@ mod tests {
         let mut app = mock_app();
         let cw_template_id = app.store_code(contract_template());
 
-        let msg = InstantiateMsg { fixed_fee: Uint128::from(1000u128) };
+        let msg = InstantiateMsg { owner: Addr::unchecked(ADMIN), fixed_fee: Uint128::from(1000u128) };
         let cw_template_contract_addr = app
             .instantiate_contract(
                 cw_template_id,
@@ -62,7 +62,7 @@ mod tests {
         use crate::msg::ExecuteMsg;
 
         #[test]
-        fn count() {
+        fn send_duo() {
             let (mut app, cw_template_contract) = proper_instantiate();
 
             let msg = ExecuteMsg::SendDuo {receiver1: Addr::unchecked(USER2), receiver2: Addr::unchecked(USER3)};

@@ -3,6 +3,7 @@ use cosmwasm_std::{Addr, Coin, Uint128};
 
 #[cw_serde]
 pub struct InstantiateMsg {
+    pub owner: Addr,
     pub fixed_fee: Uint128,
 }
 

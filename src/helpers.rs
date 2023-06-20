@@ -2,7 +2,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use cosmwasm_std::{
-    to_binary, Addr, CosmosMsg, CustomQuery, Querier, QuerierWrapper, StdResult, WasmMsg, WasmQuery,
+    to_binary, Addr, CosmosMsg, coins, CustomQuery, Querier, QuerierWrapper, StdResult, WasmMsg, WasmQuery,
 };
 
 use crate::msg::{ExecuteMsg, GetBalanceResponse, GetOwnerResponse, QueryMsg};
@@ -22,7 +22,7 @@ impl CwTemplateContract {
         Ok(WasmMsg::Execute {
             contract_addr: self.addr().into(),
             msg,
-            funds: vec![],
+            funds: coins(10000, "usei"),
         }
         .into())
     }
